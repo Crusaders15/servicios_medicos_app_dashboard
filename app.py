@@ -106,7 +106,7 @@ def load_data_from_r2():
         
         s3 = boto3.client(
             service_name="s3",
-            endpoint_url=f"https://128bfd08337c53dd0b1f1509237b5be8.r2.cloudflarestorage.com"
+            endpoint_url=f"https://128bfd08337c53dd0b1f1509237b5be8.r2.cloudflarestorage.com",
             aws_access_key_id=settings.access_key,
             aws_secret_access_key=settings.secret_key,
             region_name="auto"
