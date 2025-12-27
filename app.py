@@ -349,12 +349,14 @@ if check_password():
             monto_region_query = f"""
                 SELECT 
                     RegionProveedor as region,
-                    SUM(TRY_CAST(MontoTotalOC_CLP AS DOUBLE)) as monto
+                    SUM(TRY_CAST(MontoTotalOC AS DOUBLE)) as monto
                 FROM compras
                 WHERE {where_sql}
                 GROUP BY RegionProveedor
                 ORDER BY monto DESC
                 LIMIT 10
+            """
+            df_monto = con.execute(monto_region_query).df()
             """
             df_monto = con.execute(monto_region_query).df()
             
@@ -478,7 +480,7 @@ if check_password():
                 SELECT 
                     RegionUnidadCompra as region,
                     COUNT(*) as ordenes,
-                    SUM(TRY_CAST(MontoTotalOC_CLP AS DOUBLE)) as monto_total
+                    SUM(TRY_CAST(MontoTotalOC AS DOUBLE)) as monto_total
                 FROM compras
                 WHERE {where_sql}
                 GROUP BY RegionUnidadCompra
@@ -530,8 +532,8 @@ if check_password():
                 ONUProducto as especialidad,
                 COUNT(*) as ordenes,
                 COUNT(DISTINCT ProveedorRUT) as proveedores,
-                SUM(TRY_CAST(MontoTotalOC_CLP AS DOUBLE)) as monto_total,
-                AVG(TRY_CAST(MontoTotalOC_CLP AS DOUBLE)) as monto_promedio
+                SUM(TRY_CAST(MontoTotalOC AS DOUBLE)) as monto_total,
+                AVG(TRY_CAST(MontoTotalOC AS DOUBLE)) as monto_promedio
             FROM compras
             WHERE {where_sql} AND ONUProducto IS NOT NULL
             GROUP BY ONUProducto
@@ -590,7 +592,7 @@ if check_password():
                 RegionUnidadCompra,
                 ONUProducto as Especialidad,
                 RubroN1 as Rubro,
-                TRY_CAST(MontoTotalOC_CLP AS DOUBLE) as Monto_CLP
+                TRY_CAST(MontoTotalOC AS DOUBLE) as Monto_CLP
             FROM compras
             WHERE {where_sql}
             ORDER BY FechaEnvioOC_parsed DESC
