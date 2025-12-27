@@ -101,26 +101,26 @@ def check_password():
 @st.cache_resource(ttl=3600)
 def load_data_from_r2():
     try:
-        # Use your existing secrets
+        # 1. Use existing secrets
         settings = st.secrets["R2"]
         con = duckdb.connect(database=':memory:')
         con.execute("INSTALL httpfs; LOAD httpfs;")
         
-        # Configure connection to Cloudflare
+        # 2. Configure connection (Fixed the bracket error from your screenshot)
         endpoint = settings["R2_ENDPOINT"].replace("https://", "")
         con.execute(f"SET s3_endpoint='{endpoint}'")
         con.execute(f"SET s3_access_key_id='{settings['ACCESS_KEY']}'")
         con.execute(f"SET s3_secret_access_key='{settings['SECRET_KEY']}'")
         con.execute("SET s3_region='auto'")
         
-        # Point to your NEW 156MB Parquet file
+        # 3. Point to your 156MB Parquet file
         s3_url = f"s3://{settings['R2_BUCKET_NAME']}/07OCCompraAgil.parquet"
         
         with st.spinner('🚀 Cargando inteligencia de salud...'):
-            # This line 'creates' the link named 'compras' that line 238 is looking for
+            # This creates the 'compras' table that Line 238 is looking for
             con.execute(f"CREATE OR REPLACE TABLE compras AS SELECT * FROM read_parquet('{s3_url}')")
             
-            # This ensures your date filters work without errors
+            # This handles your date columns for the dashboard
             con.execute("""
                 ALTER TABLE compras ADD COLUMN IF NOT EXISTS FechaEnvioOC_parsed DATE;
                 UPDATE compras SET FechaEnvioOC_parsed = TRY_CAST(FechaEnvioOC AS DATE);
