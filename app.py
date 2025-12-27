@@ -270,7 +270,7 @@ if check_password():
         st.metric(
             "Monto Total",
             f"${monto_miles_millones:,.1f}B CLP",
-            help="Suma total de MontoTotalOC_CLP"
+            help="Suma total de MontoTotalOC"
         )
     
     with col4:
