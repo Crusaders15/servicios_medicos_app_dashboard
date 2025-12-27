@@ -357,25 +357,23 @@ if check_password():
                 LIMIT 10
             """
             df_monto = con.execute(monto_region_query).df()
-            """
-            df_monto = con.execute(monto_region_query).df()
-            
-            if not df_monto.empty:
-                fig2 = px.pie(
-                    df_monto,
-                    values='monto',
-                    names='region',
-                    title='Distribución de Montos (Top 10)'
-                )
-                fig2.update_layout(
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font_color='white'
-                )
-                st.plotly_chart(fig2, use_container_width=True)
-            else:
-                st.info("No hay datos para mostrar")
         
+        if not df_monto.empty:
+            fig2 = px.pie(
+                df_monto,
+                values='monto',
+                names='region',
+                title='Distribución de Montos (Top 10)'
+            )
+            fig2.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font_color='white'
+            )
+            st.plotly_chart(fig2, use_container_width=True)
+        else:
+            st.info("No hay datos para mostrar")
+            
         # Tendencia temporal
         st.subheader("Tendencia Temporal de Órdenes")
         
@@ -394,25 +392,18 @@ if check_password():
         if not df_tend.empty:
             fig3 = go.Figure()
             fig3.add_trace(go.Scatter(
-                x=df_tend['mes'],
-                y=df_tend['ordenes'],
-                name='Órdenes',
-                mode='lines+markers',
+                x=df_tend['mes'], y=df_tend['ordenes'],
+                name='Órdenes', mode='lines+markers',
                 line=dict(color='#00C49F', width=3)
             ))
             fig3.add_trace(go.Scatter(
-                x=df_tend['mes'],
-                y=df_tend['proveedores'],
-                name='Proveedores Únicos',
-                mode='lines+markers',
-                line=dict(color='#FF8042', width=3),
-                yaxis='y2'
+                x=df_tend['mes'], y=df_tend['proveedores'],
+                name='Proveedores Únicos', mode='lines+markers',
+                line=dict(color='#FF8042', width=3), yaxis='y2'
             ))
             fig3.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color='white',
-                yaxis=dict(title='Órdenes'),
+                plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+                font_color='white', yaxis=dict(title='Órdenes'),
                 yaxis2=dict(title='Proveedores', overlaying='y', side='right')
             )
             st.plotly_chart(fig3, use_container_width=True)
