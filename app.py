@@ -22,7 +22,7 @@ st.set_page_config(
     page_title="Inteligencia en Salud Chile",
     layout="wide",
     initial_sidebar_state="expanded",
-    page_icon="🏥"
+    page_icon=""
 )
 
 # ==========================================
@@ -76,7 +76,7 @@ def check_password():
     if st.session_state.password_correct:
         return True
     
-    st.markdown("<h1 style='text-align: center; color: white;'>🔐 Inteligencia en Salud - Chile</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: white;'> Inteligencia en Salud - Chile</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -91,7 +91,7 @@ def check_password():
             else:
                 st.error("❌ Acceso Denegado")
     
-    st.info("💡 Contraseña por defecto: **salud2025**")
+    st.info("")
     return False
 
 # ==========================================
@@ -116,7 +116,7 @@ def load_data_from_r2():
         # This points to the 156MB file you just uploaded
         s3_url = f"s3://{settings['R2_BUCKET_NAME']}/07OCCompraAgil.parquet"
         
-        with st.spinner('🚀 Cargando datos...'):
+        with st.spinner(' Cargando datos...'):
             # This creates the temporary table named 'compras'
             con.execute(f"CREATE OR REPLACE TABLE compras AS SELECT * FROM read_parquet('{s3_url}')")
             
@@ -146,33 +146,33 @@ REGIONES_CHILE = [
 # ==========================================
 
 if check_password():
-    st.title("🏥 Inteligencia en Salud - Chile")
+    st.title(" Inteligencia en Salud - Chile")
     st.markdown("**Dashboard de Análisis de Compras Ágiles en el Sector Salud**")
     
     # Cargar datos
     con, error = load_data_from_r2()
     
     if con is None:
-        st.error(f"⚠️ Error al cargar datos desde R2: {error}")
-        st.info("📊 El sistema requiere acceso a R2 para funcionar correctamente.")
+        st.error(f" Error al cargar datos desde R2: {error}")
+        st.info("El sistema requiere acceso a R2 para funcionar correctamente.")
         st.stop()
     
     # ==========================================
     # SIDEBAR: FILTROS GLOBALES
     # ==========================================
     
-    st.sidebar.title("🎯 Filtros Globales")
+    st.sidebar.title("Filtros Globales")
     
     # Filtro de Solo Salud
-    solo_salud = st.sidebar.checkbox("✅ Solo Sector Salud", value=True)
+    solo_salud = st.sidebar.checkbox("Solo Sector Salud", value=True)
     
     # Fechas
-    st.sidebar.subheader("📅 Período de Análisis")
+    st.sidebar.subheader("Período de Análisis")
     fecha_inicio = st.sidebar.date_input("Fecha Inicio", value=datetime(2025, 1, 1))
     fecha_fin = st.sidebar.date_input("Fecha Fin", value=datetime(2025, 12, 31))
     
     # Regiones
-    st.sidebar.subheader("📍 Regiones")
+    st.sidebar.subheader("Regiones")
     
     region_proveedor_options = ['Todas'] + REGIONES_CHILE
     region_proveedor = st.sidebar.selectbox("Región del Proveedor", region_proveedor_options)
@@ -184,10 +184,10 @@ if check_password():
     especialidades_query = "SELECT DISTINCT ONUProducto FROM compras WHERE ONUProducto IS NOT NULL ORDER BY ONUProducto"
     especialidades_df = con.execute(especialidades_query).df()
     especialidades = ['Todas'] + especialidades_df['ONUProducto'].tolist()
-    especialidad_selected = st.sidebar.selectbox("🏥 Especialidad/Servicio", especialidades)
+    especialidad_selected = st.sidebar.selectbox("Especialidad/Servicio", especialidades)
     
     # Búsqueda
-    st.sidebar.subheader("🔍 Búsqueda")
+    st.sidebar.subheader("Búsqueda")
     search_term = st.sidebar.text_input("Buscar Proveedor (Nombre o RUT)")
     
     # ==========================================
@@ -225,7 +225,7 @@ if check_password():
     # MÉTRICAS PRINCIPALES (KPIs)
     # ==========================================
     
-    with st.spinner('📊 Calculando métricas...'):
+    with st.spinner('Calculando métricas...'):
         # Total adjudicadores únicos
         kpi_query = f"""
             SELECT 
@@ -242,14 +242,14 @@ if check_password():
     
     with col1:
         st.metric(
-            "👥 Total Adjudicadores",
+            "Total Adjudicadores",
             f"{int(kpis['total_adjudicadores']):,}",
             help="Proveedores únicos (por RUT)"
         )
     
     with col2:
         st.metric(
-            "📋 Órdenes de Compra",
+            "Órdenes de Compra",
             f"{int(kpis['total_ordenes']):,}",
             help="Total de OC generadas"
         )
@@ -257,7 +257,7 @@ if check_password():
     with col3:
         monto_miles_millones = kpis['monto_total'] / 1_000_000_000 if kpis['monto_total'] else 0
         st.metric(
-            "💰 Monto Total",
+            "Monto Total",
             f"${monto_miles_millones:,.1f}B CLP",
             help="Suma total de MontoTotalOC_CLP"
         )
@@ -270,7 +270,7 @@ if check_password():
         """
         regiones_activas = con.execute(regiones_activas_query).df().iloc[0]['regiones']
         st.metric(
-            "📍 Regiones Activas",
+            "Regiones Activas",
             f"{int(regiones_activas)}",
             help="Regiones con proveedores"
         )
@@ -282,10 +282,10 @@ if check_password():
     # ==========================================
     
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📊 Resumen Ejecutivo",
-        "📍 Análisis Regional",
-        "🏥 Por Especialidad",
-        "📋 Datos Detallados"
+        "Resumen Ejecutivo",
+        "Análisis Regional",
+        "Por Especialidad",
+        "Datos Detallados"
     ])
     
     # ==========================================
@@ -293,7 +293,7 @@ if check_password():
     # ==========================================
     
     with tab1:
-        st.header("📊 Resumen Ejecutivo")
+        st.header("Resumen Ejecutivo")
         
         col1, col2 = st.columns(2)
         
@@ -364,7 +364,7 @@ if check_password():
                 st.info("No hay datos para mostrar")
         
         # Tendencia temporal
-        st.subheader("📈 Tendencia Temporal de Órdenes")
+        st.subheader("Tendencia Temporal de Órdenes")
         
         tendencia_query = f"""
             SELECT 
@@ -411,7 +411,7 @@ if check_password():
     # ==========================================
     
     with tab2:
-        st.header("📍 Análisis Regional Detallado")
+        st.header("Análisis Regional Detallado")
         
         col1, col2 = st.columns(2)
         
@@ -512,7 +512,7 @@ if check_password():
     # ==========================================
     
     with tab3:
-        st.header("🏥 Análisis por Especialidad")
+        st.header("Análisis por Especialidad")
         
         especialidades_completo_query = f"""
             SELECT 
@@ -551,7 +551,7 @@ if check_password():
             # Exportar
             csv = df_esp_completo.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Descargar Tabla como CSV",
+                label="Descargar Tabla como CSV",
                 data=csv,
                 file_name=f"especialidades_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv"
@@ -564,7 +564,7 @@ if check_password():
     # ==========================================
     
     with tab4:
-        st.header("📋 Vista Detallada de Registros")
+        st.header("Vista Detallada de Registros")
         
         # Límite de registros a mostrar
         limit = st.slider("Número de registros a mostrar", 100, 5000, 1000, 100)
@@ -603,7 +603,7 @@ if check_password():
             # Exportar datos filtrados
             csv_detalle = df_detalle.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Descargar Datos Filtrados (CSV)",
+                label="Descargar Datos Filtrados (CSV)",
                 data=csv_detalle,
                 file_name=f"datos_filtrados_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 mime="text/csv"
@@ -618,7 +618,7 @@ if check_password():
     st.markdown("---")
     st.markdown(
         "<p style='text-align: center; color: rgba(255,255,255,0.7);'>"
-        "🏥 Dashboard Inteligencia en Salud Chile | Compra Ágil 2025 | "
+        "Dashboard Inteligencia en Salud Chile | Compra Ágil 2025 | "
         f"Datos actualizados: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
         "</p>",
         unsafe_allow_html=True
