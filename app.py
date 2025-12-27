@@ -194,21 +194,43 @@ if check_password():
     st.sidebar.subheader("Búsqueda")
     search_term = st.sidebar.text_input("Buscar Proveedor (Nombre o RUT)")
     
+   # ==========================================
+    # CONSTRUCCIÓN DE FILTROS
     # ==========================================
-    # CONSTRUCCIÓN DE QUERY DINÁMICA
-    # ==========================================
+    where_clauses = []
     
-    where_clauses.append(f"(LOWER(Proveedor) LIKE '%{search_term.lower().replace("'", "''")}%' OR ProveedorRUT LIKE '%{search_term}%')")
-
+    # 1. Filtro de salud
+    if solo_salud:
+        where_clauses.append("(LOWER(RubroN1) LIKE '%salud%' OR LOWER(RubroN1) LIKE '%médico%')")
+    
+    # 2. Filtro de fechas
+    where_clauses.append(f"FechaEnvioOC_parsed >= DATE '{fecha_inicio}'")
+    where_clauses.append(f"FechaEnvioOC_parsed <= DATE '{fecha_fin}'")
+    
+    # 3. Filtro de regiones
+    if region_proveedor != 'Todas':
+        where_clauses.append(f"RegionProveedor = '{region_proveedor}'")
+    
+    if region_compra != 'Todas':
+        where_clauses.append(f"RegionUnidadCompra = '{region_compra}'")
+    
+    # 4. Filtro de especialidad
+    if especialidad_selected != 'Todas':
+        where_clauses.append(f"ONUProducto = '{especialidad_selected}'")
+    
+    # 5. Filtro de búsqueda (Usando la variable definida en la línea 195)
+    if search_term:
+        term_esc = search_term.lower().replace("'", "''")
+        where_clauses.append(f"(LOWER(Proveedor) LIKE '%{term_esc}%' OR ProveedorRUT LIKE '%{search_term}%')")
+    
+    # Unión final de los filtros
     where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
-
+    
     # ==========================================
     # MÉTRICAS PRINCIPALES (KPIs)
     # ==========================================
-
     with st.spinner('Calculando métricas...'):
-        # Se usa 'MontoTotalOC' porque 'MontoTotalOC_CLP' no existe en tu esquema
-        # Se usa TRY_CAST porque la columna es de tipo texto (VARCHAR)
+        # Usamos 'MontoTotalOC' que es el nombre real en tu archivo de 63 columnas
         kpi_query = f"""
             SELECT 
                 COUNT(DISTINCT ProveedorRUT) as total_adjudicadores,
@@ -218,8 +240,9 @@ if check_password():
             WHERE {where_sql}
         """
         
-        # Ejecución con verificación para evitar el fallo de iloc[0]
         res_df = con.execute(kpi_query).df()
+        
+        # Verificación para evitar el fallo de iloc[0] si no hay resultados
         if not res_df.empty:
             kpis = res_df.iloc[0].fillna(0)
         else:
