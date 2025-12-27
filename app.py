@@ -115,7 +115,7 @@ def load_data_from_r2():
         
         # Descarga el archivo
         with st.spinner('📥 Descargando datos desde R2... (2GB, puede tomar unos minutos)'):
-            response = s3.get_object(Bucket=settings.bucket, Key='compra-agil-data/CA_2025.csv')
+            response = s3.get_object(Bucket=settings.bucket, Key='CA_2025.csv')
             csv_data = response['Body'].read()
         
         # Lectura optimizada con DuckDB
