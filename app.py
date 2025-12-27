@@ -16,7 +16,6 @@ class R2Config(BaseModel):
     account_id: str = Field(..., alias="ACCOUNT_ID")
     access_key: str = Field(..., alias="ACCESS_KEY")
     secret_key: str = Field(..., alias="SECRET_KEY")
-    endpoint: str = Field(..., alias="R2_ENDPOINT")
     bucket: str = Field(..., alias="R2_BUCKET_NAME")
 
 st.set_page_config(
