@@ -198,48 +198,32 @@ if check_password():
     # CONSTRUCCIÓN DE QUERY DINÁMICA
     # ==========================================
     
-    where_clauses = []
-    
-    # Filtro de salud
-    if solo_salud:
-        where_clauses.append("(LOWER(RubroN1) LIKE '%salud%' OR LOWER(RubroN1) LIKE '%médico%')")
-    
-    # Filtro de fechas
-    where_clauses.append(f"FechaEnvioOC_parsed >= DATE '{fecha_inicio}'")
-    where_clauses.append(f"FechaEnvioOC_parsed <= DATE '{fecha_fin}'")
-    
-    # Filtro de regiones
-    if region_proveedor != 'Todas':
-        where_clauses.append(f"RegionProveedor = '{region_proveedor}'")
-    
-    if region_compra != 'Todas':
-        where_clauses.append(f"RegionUnidadCompra = '{region_compra}'")
-    
-    # Filtro de especialidad
-    if especialidad_selected != 'Todas':
-        where_clauses.append(f"ONUProducto = '{especialidad_selected}'")
-    
-    # Filtro de búsqueda
-    if search_term:
-        where_clauses.append(f"(LOWER(Proveedor) LIKE '%{search_term.lower()}%' OR ProveedorRUT LIKE '%{search_term}%')")
-    
-    where_sql = " AND ".join(where_clauses)
-    
+    where_clauses.append(f"(LOWER(Proveedor) LIKE '%{search_term.lower().replace("'", "''")}%' OR ProveedorRUT LIKE '%{search_term}%')")
+
+    where_sql = " AND ".join(where_clauses) if where_clauses else "1=1"
+
     # ==========================================
     # MÉTRICAS PRINCIPALES (KPIs)
     # ==========================================
-    
+
     with st.spinner('Calculando métricas...'):
-        # Total adjudicadores únicos
+        # Se usa 'MontoTotalOC' porque 'MontoTotalOC_CLP' no existe en tu esquema
+        # Se usa TRY_CAST porque la columna es de tipo texto (VARCHAR)
         kpi_query = f"""
             SELECT 
                 COUNT(DISTINCT ProveedorRUT) as total_adjudicadores,
                 COUNT(*) as total_ordenes,
-                SUM(TRY_CAST(MontoTotalOC_CLP AS DOUBLE)) as monto_total
+                SUM(TRY_CAST(MontoTotalOC AS DOUBLE)) as monto_total
             FROM compras
             WHERE {where_sql}
         """
-        kpis = con.execute(kpi_query).df().iloc[0]
+        
+        # Ejecución con verificación para evitar el fallo de iloc[0]
+        res_df = con.execute(kpi_query).df()
+        if not res_df.empty:
+            kpis = res_df.iloc[0].fillna(0)
+        else:
+            kpis = {'total_adjudicadores': 0, 'total_ordenes': 0, 'monto_total': 0}
     
     # Mostrar KPIs
     col1, col2, col3, col4 = st.columns(4)
