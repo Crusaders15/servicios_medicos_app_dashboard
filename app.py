@@ -98,46 +98,35 @@ def check_password():
 # 4. CARGA DE DATOS DESDE R2
 # ==========================================
 
-@st.cache_data(ttl=3600)
+@st.cache_resource(ttl=3600)
 def load_data_from_r2():
-    """Carga el archivo de 2GB desde R2 con optimizaciones"""
     try:
-        settings = R2Config(**st.secrets["R2"])
+        # 1. Use your existing secrets
+        settings = st.secrets["R2"]
+        con = duckdb.connect(database=':memory:')
         
-        s3 = boto3.client(
-            service_name="s3",
-            endpoint_url=f"https://128bfd08337c53dd0b1f1509237b5be8.r2.cloudflarestorage.com",
-            aws_access_key_id=settings.access_key,
-            aws_secret_access_key=settings.secret_key,
-            region_name="auto"
-        )
+        # 2. Configure DuckDB to stream from R2
+        con.execute("INSTALL httpfs; LOAD httpfs;")
+        endpoint = settings["R2_ENDPOINT"].replace("https://", "")
+        con.execute(f"SET s3_endpoint='{endpoint}'")
+        con.execute(f"SET s3_access_key_id='{settings['ACCESS_KEY']}'")
+        con.execute(f"SET s3_secret_access_key='{settings['SECRET_KEY']}'")
+        con.execute("SET s3_region='auto'")
         
-        # Descarga el archivo
-        with st.spinner('📥 Descargando datos desde R2... (2GB, puede tomar unos minutos)'):
-            response = s3.get_object(Bucket=settings.bucket, Key='CA_2025.csv')
-            csv_data = response['Body'].read()
+        # 3. Point to your NEW 156MB Parquet file
+        s3_url = f"s3://{settings['R2_BUCKET_NAME']}/07OCCompraAgil.parquet"
         
-        # Lectura optimizada con DuckDB
-        with st.spinner('⚡ Procesando 546,855 registros con DuckDB...'):
-            con = duckdb.connect(database=':memory:')
+        with st.spinner('🚀 Cargando inteligencia de salud...'):
+            # This streams only what is needed, saving RAM
+            con.execute(f"CREATE OR REPLACE TABLE compras AS SELECT * FROM read_parquet('{s3_url}')")
             
-            # Cargar CSV directo a DuckDB (más rápido que pandas)
+            # This step is now instant because types are locked in Parquet
             con.execute("""
-                CREATE TABLE compras AS 
-                SELECT * FROM read_csv_auto(?)
-            """, [io.BytesIO(csv_data)])
-            
-            # Convertir fechas
-            con.execute("""
-                ALTER TABLE compras 
-                ADD COLUMN FechaEnvioOC_parsed DATE;
-                
-                UPDATE compras 
-                SET FechaEnvioOC_parsed = TRY_CAST(FechaEnvioOC AS DATE);
+                ALTER TABLE compras ADD COLUMN IF NOT EXISTS FechaEnvioOC_parsed DATE;
+                UPDATE compras SET FechaEnvioOC_parsed = TRY_CAST(FechaEnvioOC AS DATE);
             """)
-        
+            
         return con, None
-        
     except Exception as e:
         return None, str(e)
 
