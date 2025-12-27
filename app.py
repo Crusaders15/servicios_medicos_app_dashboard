@@ -136,7 +136,7 @@ def load_data_from_r2():
 
 REGIONES_CHILE = [
     'Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Coquimbo',
-    'Valparaíso', 'Metropolitana de Santiago', "Libertador Gral. Bernardo O'Higgins",
+    'Valparaíso', 'Metropolitana de Santiago', "Libertador Gral. Bernardo O Higgins",
     'Maule', 'Ñuble', 'Biobío', 'La Araucanía', 'Los Ríos', 'Los Lagos',
     'Aysén del Gral. Carlos Ibáñez del Campo', 'Magallanes y de la Antártica Chilena'
 ]
