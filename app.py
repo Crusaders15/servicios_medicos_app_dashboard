@@ -127,7 +127,7 @@ def load_data_from_r2():
             # Ahora las columnas como FechaEnvioOC ya existen sin espacios
             con.execute("""
                 ALTER TABLE compras ADD COLUMN IF NOT EXISTS FechaEnvioOC_parsed DATE;
-                UPDATE compras SET FechaEnvioOC_parsed = TRY_CAST(FechaEnvioOC AS DATE);
+                UPDATE compras SET FechaEnvioOC_parsed = strptime(FechaEnvioOC, '%d-%m-%Y %H:%M:%S')::DATE;
             """)
             
         return con, None
