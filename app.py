@@ -63,6 +63,16 @@ def set_design():
         [data-testid="stMetricLabel"] {
             color: #A0A0A0 !important;
             font-size: 1rem !important;
+        /* Estilo para las tablas: Zebra stripes y fondo oscuro */
+        .stDataFrame {
+            background-color: #1C2128 !important;
+            border: 1px solid #30363D !important;
+            border-radius: 8px !important;
+        }
+        
+        /* Color del slider de registros */
+        .stSlider [data-baseweb="slider"] {
+            color: #00F2FF;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -328,14 +338,12 @@ if check_password():
             df_esp = con.execute(top_especialidades_query).df()
             
             if not df_esp.empty:
-                fig1 = px.bar(
-                    df_esp,
-                    x='cantidad',
-                    y='especialidad',
-                    orientation='h',
-                    title='Cantidad de Órdenes por Especialidad',
-                    color='cantidad',
-                    color_continuous_scale='Blues'
+                fig1.update_layout(
+                template="plotly_dark",
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font_color='#FFFFFF',
+                margin=dict(l=20, r=20, t=50, b=20)
                 )
                 fig1.update_layout(
                     template="plotly_dark",
@@ -372,10 +380,12 @@ if check_password():
                 title='Distribución de Montos (Top 10)'
             )
             fig2.update_layout(
-                template="plotly_dark",
-                paper_bgcolor='rgba(0,0,0,0)',
-                font_color='#FFFFFF',
-                margin=dict(l=10, r=10, t=50, b=10)
+            template="plotly_dark",
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color='#FFFFFF',
+            margin=dict(l=10, r=10, t=50, b=10)
+            )
+        fig2.update_traces(textposition='inside', textinfo='percent+label')
             )
             # Esto hace que las etiquetas blancas se vean dentro de la torta Boric trolo
             fig2.update_traces(textposition='inside', textinfo='percent+label')
@@ -411,10 +421,13 @@ if check_password():
                 line=dict(color='#FF8042', width=3), yaxis='y2'
             ))
             fig3.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
-                font_color='white', yaxis=dict(title='Órdenes'),
-                yaxis2=dict(title='Proveedores', overlaying='y', side='right')
-            )
+            template="plotly_dark",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color='#FFFFFF',
+            yaxis=dict(title='Órdenes', gridcolor='#30363D'),
+            yaxis2=dict(title='Proveedores', overlaying='y', side='right', gridcolor='#30363D')
+    )
             st.plotly_chart(fig3, use_container_width=True)
         else:
             st.info("No hay datos temporales")
