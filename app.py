@@ -337,24 +337,27 @@ if check_password():
             """
             df_esp = con.execute(top_especialidades_query).df()
             
-            if not df_esp.empty:
-                fig1.update_layout(
+           if not df_esp.empty:
+            fig1 = px.bar(
+                df_esp,
+                x='cantidad',
+                y='especialidad',
+                orientation='h',
+                title='Cantidad de Órdenes por Especialidad',
+                color='cantidad',
+                color_continuous_scale='Blues'
+            )
+            fig1.update_layout(
                 template="plotly_dark",
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
                 font_color='#FFFFFF',
-                margin=dict(l=20, r=20, t=50, b=20)
-                )
-                fig1.update_layout(
-                    template="plotly_dark",
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font_color='#FFFFFF',
-                    margin=dict(l=20, r=20, t=50, b=20)
-                )
-                st.plotly_chart(fig1, use_container_width=True)
-            else:
-                st.info("No hay datos para mostrar con los filtros seleccionados")
+                margin=dict(l=20, r=20, t=50, b=20),
+                yaxis={'categoryorder':'total ascending'}
+            )
+            st.plotly_chart(fig1, use_container_width=True)
+        else:
+            st.info("No hay datos para mostrar con los filtros seleccionados")
         
         with col2:
             st.subheader("Distribución de Montos por Región")
