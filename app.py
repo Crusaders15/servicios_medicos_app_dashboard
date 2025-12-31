@@ -337,7 +337,7 @@ if check_password():
             """
             df_esp = con.execute(top_especialidades_query).df()
             
-           if not df_esp.empty:
+        if not df_esp.empty:
             fig1 = px.bar(
                 df_esp,
                 x='cantidad',
