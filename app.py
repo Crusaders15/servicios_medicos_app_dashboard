@@ -30,7 +30,6 @@ st.set_page_config(
 # ==========================================
 
 def set_design():
-    def set_design():
     st.markdown("""
         <style>
         /* Fondo y texto principal */
