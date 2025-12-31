@@ -379,13 +379,11 @@ if check_password():
                 title='Distribución de Montos (Top 10)'
             )
             fig2.update_layout(
-            template="plotly_dark",
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color='#FFFFFF',
-            margin=dict(l=10, r=10, t=50, b=10)
+                template="plotly_dark",
+                paper_bgcolor='rgba(0,0,0,0)',
+                font_color='#FFFFFF',
+                margin=dict(l=10, r=10, t=50, b=10)
             )
-        fig2.update_traces(textposition='inside', textinfo='percent+label')
-            # Esto hace que las etiquetas blancas se vean dentro de la torta Boric trolo
             fig2.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig2, use_container_width=True)
         else:
