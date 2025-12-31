@@ -385,7 +385,6 @@ if check_password():
             margin=dict(l=10, r=10, t=50, b=10)
             )
         fig2.update_traces(textposition='inside', textinfo='percent+label')
-            )
             # Esto hace que las etiquetas blancas se vean dentro de la torta Boric trolo
             fig2.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig2, use_container_width=True)
