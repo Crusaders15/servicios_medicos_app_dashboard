@@ -352,7 +352,6 @@ if check_password():
                     font_color='#FFFFFF',
                     margin=dict(l=20, r=20, t=50, b=20)
                 )
-                )
                 st.plotly_chart(fig1, use_container_width=True)
             else:
                 st.info("No hay datos para mostrar con los filtros seleccionados")
