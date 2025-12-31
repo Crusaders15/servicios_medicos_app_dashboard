@@ -338,10 +338,12 @@ if check_password():
                     color_continuous_scale='Blues'
                 )
                 fig1.update_layout(
+                    template="plotly_dark",
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font_color='white',
-                    yaxis={'categoryorder':'total ascending'}
+                    font_color='#FFFFFF',
+                    margin=dict(l=20, r=20, t=50, b=20)
+                )
                 )
                 st.plotly_chart(fig1, use_container_width=True)
             else:
@@ -370,10 +372,13 @@ if check_password():
                 title='Distribución de Montos (Top 10)'
             )
             fig2.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
+                template="plotly_dark",
                 paper_bgcolor='rgba(0,0,0,0)',
-                font_color='white'
+                font_color='#FFFFFF',
+                margin=dict(l=10, r=10, t=50, b=10)
             )
+            # Esto hace que las etiquetas blancas se vean dentro de la torta Boric trolo
+            fig2.update_traces(textposition='inside', textinfo='percent+label')
             st.plotly_chart(fig2, use_container_width=True)
         else:
             st.info("No hay datos para mostrar")
