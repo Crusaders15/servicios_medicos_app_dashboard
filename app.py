@@ -30,35 +30,40 @@ st.set_page_config(
 # ==========================================
 
 def set_design():
+    def set_design():
     st.markdown("""
         <style>
+        /* Fondo y texto principal */
         .stApp {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #0E1117;
+            color: #FFFFFF;
         }
+
+        /* Sidebar con contraste */
         [data-testid="stSidebar"] {
-            background-color: rgba(0,0,0,0.85) !important;
+            background-color: #161B22 !important;
+            border-right: 1px solid #30363D;
         }
-        .metric-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+        
+        /* Títulos en Cian para legibilidad */
         h1, h2, h3 {
-            color: white !important;
+            color: #00F2FF !important;
+            font-weight: 700 !important;
         }
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 8px;
+
+        /* Contenedores de métricas (KPIs) */
+        div[data-testid="metric-container"] {
+            background-color: #1C2128;
+            border: 1px solid #30363D;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
-        .stTabs [data-baseweb="tab"] {
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            padding: 10px 20px;
-        }
-        .stTabs [aria-selected="true"] {
-            background-color: white;
-            color: #667eea;
+
+        /* Etiquetas de métricas en gris claro */
+        [data-testid="stMetricLabel"] {
+            color: #A0A0A0 !important;
+            font-size: 1rem !important;
         }
         </style>
     """, unsafe_allow_html=True)
